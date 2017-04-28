@@ -262,7 +262,6 @@ namespace SeleniumTest
             yt.pass.EnterText("123456123");
             yt.signIn2.Click();
 
-            //waitClickable("id", "Passwd");
             yt.searchBar.EnterText("youtube music");
             yt.searchBar.Submit();
             yt.musicLink.Click();
@@ -274,13 +273,12 @@ namespace SeleniumTest
             yt.subscribe.Click();
 
             waitClickable("xpath", Youtube.unsubscribeXpath);
-            //System.Threading.Thread.Sleep(3000);
             yt.unsubscribe.Click();
         }
         [TearDown]
         public void Close()
         {
-            //Driver.driver.Close();
+            Driver.driver.Close();
         }
         
         public void Search(AmazonBuyItem amazon, string search, Boolean wait)
