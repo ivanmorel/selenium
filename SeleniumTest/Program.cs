@@ -23,7 +23,9 @@ namespace SeleniumTest
         [SetUp]
         public void Init()
         {
-            Driver.driver = new ChromeDriver();
+            ChromeOptions options = new ChromeOptions();
+            options.AddArguments("--disable-notifications");
+            Driver.driver = new ChromeDriver(options);
         }
 
         [Test]
@@ -46,20 +48,6 @@ namespace SeleniumTest
 
             fbregister.btn1.Click();
             fbregister.btn2.Click();
-
-
-            //------- Old Method ------------------------------------
-
-            //Method.FillText( "name", "firstname", "Ivan");
-            //Method.FillText( "name", "lastname", "Morel");
-            //Method.FillText( "id", "u_0_6", "ivanmorel94@gmail.com");
-            //Method.FillText( "id", "u_0_9", "ivanmorel94@gmail.com");
-            //Method.FillText( "id", "u_0_d", "12345678");
-            //Method.SelectDropdown( "id", "day", "20");
-            //Method.SelectDropdown( "id", "month", "Aug");
-            //Method.SelectDropdown( "id", "year", "1994");
-            //Method.Click( "id", "u_0_h");
-            //Method.Click( "id", "u_0_l");
         }
 
         [Test]
@@ -73,11 +61,6 @@ namespace SeleniumTest
             fblogin.pass.EnterText("12345678");
             fblogin.btnlogin.Click();
 
-            //------- Old Method ------------------------------------
-
-            //Method.FillText( "name", "email", "ivanmorel94@hotmail.com");
-            //Method.FillText( "name", "pass", "12345678");
-            //Method.Click( "id", "loginbutton");
         }
 
 
@@ -95,16 +78,6 @@ namespace SeleniumTest
             ebay.lastName.EnterText("Morel");
             ebay.phone.EnterText("8299302336");
             ebay.btn.Click();
-
-            //------- Old Method ------------------------------------
-
-            //Method.FillText( "name", "email", "ivanmorel94@gmail.com");
-            //Method.FillText( "name", "remail", "ivanmorel94@gmail.com");
-            //Method.FillText( "name", "PASSWORD", "12345678");
-            //Method.FillText( "name", "firstname", "Ivan");
-            //Method.FillText( "name", "lastname", "Morel");
-            //Method.FillText( "name", "phoneFlagComp1", "8299302336");
-            //Method.Click( "id", "sbtBtn");
         }
 
         [Test]
@@ -119,14 +92,6 @@ namespace SeleniumTest
             amazon.password.EnterText("12345678");
             amazon.passwordCheck.EnterText("12345678");
             amazon.btncontinue.Click();
-
-            //------- Old Method ------------------------------------
-
-            //Method.FillText("name", "customerName", "Ivan Morel");
-            //Method.FillText("name", "email", "ivanmorel94@gmail.com");
-            //Method.FillText("name", "password", "12345678");
-            //Method.FillText("name", "passwordCheck", "12345678");
-            //Method.Click("id", "continue");
         }
 
         [Test]
@@ -154,35 +119,217 @@ namespace SeleniumTest
 
             google.phoneRec.EnterText("9302336");
             google.emailRec.EnterText("ivanmorel94@gmail.com");
-
-            //------- Old Method ------------------------------------
-
-            //Method.FillText( "name", "FirstName", "Ivan");
-            //Method.FillText( "name", "LastName", "Morel");
-            //Method.FillText( "name", "GmailAddress", "ivanmorel809");
-            //Method.FillText( "name", "Passwd", "12345678");
-            //Method.FillText( "name", "PasswdAgain", "12345678");
-
-            //System.Threading.Thread.Sleep(80);
-            //Method.Click( "id", "BirthMonth");
-            //Method.Click( "id", ":4");
-
-            //Method.FillText( "name", "BirthDay", "20");
-            //Method.FillText( "name", "BirthYear", "1994");
-
-            //Method.Click( "id", "Gender");
-            //Method.Click( "id", ":f");
-
-            //Method.FillText( "name", "RecoveryPhoneNumber", "9302336");
-            //Method.FillText( "name", "RecoveryEmailAddress", "ivanmorel94@gmail.com");
-            //Method.Click( "name", "submitbutton");
         }
 
+        [Test]
+        public void AmazonBuyItems()
+        {
 
+            AmazonBuyItem amazon = new AmazonBuyItem();
+            Method.GoToUrl("https://www.amazon.com/");
+
+            amazon.signIn.Click();
+
+            amazon.email.EnterText("ivanmorel08@gmail.com");
+            amazon.pass.EnterText("12345678");
+
+            amazon.btnSignIn.Click();
+
+            //Laptop Backpack----------------------------------------------
+            Search(amazon, "laptop backpack", false);
+            amazon.item.Click();
+
+            amazon.btnAddToCart.Click();
+
+            //iPhone 7 Case------------------------------------------------
+            Search(amazon, "iphone 7 case", true);
+            amazon.item2.Click();
+
+            amazon.btnAddToCart.Click();
+
+            //Laptop Sleeve-------------------------------------------------
+            Search(amazon, "laptop sleeve", true);
+            amazon.item3.Click();
+
+            amazon.btnAddToCart.Click();
+
+            CheckoutButtonWaitClick(amazon);
+
+            //Shipping Address-----------------------------------------
+
+            amazon.deleteAddr.Click();
+            waitInvisible("Delete");
+
+            amazon.fullName.EnterText("Test Johnson");
+            amazon.addressLine.EnterText("Av Juan Pablo Duarte #7");
+            amazon.addressLine2.EnterText("Residencial Apt. 4");
+            amazon.city.EnterText("Santiago");
+            amazon.state.EnterText("Santiago");
+            amazon.zip.EnterText("51000");
+            amazon.country.DropdownSelect("Dominican Republic");
+            amazon.phone.EnterText("8091234567");
+            amazon.btnContinue.Click();
+            
+
+            //Empty Cart-----------------------------------------------
+            Method.GoToUrl("https://www.amazon.com/");
+
+            amazon.cart.Click();
+
+            waitClickable("name", AmazonBuyItem.deleteItemName1);
+            amazon.deleteItem.Click();
+
+            waitClickable("name", AmazonBuyItem.deleteItemName2);
+            amazon.deleteItem2.Click();
+
+            waitClickable("name", AmazonBuyItem.deleteItemName3);
+            amazon.deleteItem3.Click();
+
+            Method.GoToUrl("https://www.amazon.com/");
+        }
+
+        [Test]
+        public void GmailSendEmail()
+        {
+            Method.GoToUrl("https://www.gmail.com/");
+
+            GmailSend gmail = new GmailSend();
+
+            gmail.email.EnterText("test829930@gmail.com");
+            gmail.next.Click();
+
+            waitClickable("name", "Passwd");
+            gmail.pass.EnterText("123456123");
+            gmail.signIn.Click();
+
+            waitVisible("xpath", GmailSend.composeXpath);
+            gmail.compose.Click();
+
+            waitVisible("xpath", GmailSend.recipientXpath);
+
+            gmail.recipients.EnterText("test829930@gmail.com");
+            gmail.subject.EnterText("Test");
+            gmail.textarea.EnterText("Funcionando");
+            gmail.sendBtn.Click();
+
+            gmail.inbox.Click();
+
+            waitVisible("xpath", GmailSend.clickEmailXpath);
+
+            gmail.selectEmail.Click();
+            gmail.trash.Click();
+
+        }
+
+        [Test]
+        public void FacebookPublishStatus()
+        {
+            Method.GoToUrl("https://www.facebook.com/");
+
+            FacebookPublish fb = new FacebookPublish();
+            fb.email.EnterText("test829930@gmail.com");
+            fb.pass.EnterText("123456123");
+            fb.loginBtn.Click();
+
+            fb.publish.EnterText("Test publish");
+
+            waitClickable("xpath", FacebookPublish.btnPublishXpath);
+            fb.btnPublish.Click();
+
+            waitClickable("xpath", FacebookPublish.optionsXpath);
+            fb.options.Click();
+
+            waitClickable("xpath", FacebookPublish.eliminarXpath);
+            fb.eliminar.Click();
+
+            waitClickable("xpath", FacebookPublish.eliminarPublishXpath);
+            fb.eliminarPublish.Click();
+        }
+
+        [Test]
+        public void YoutubeTest()
+        {
+            Method.GoToUrl("https://www.youtube.com/");
+
+            Youtube yt = new Youtube();
+
+            yt.signIn.Click();
+
+            yt.email.EnterText("test829930@gmail.com");
+            yt.next.Click();
+
+            waitClickable("name", "Passwd");
+            yt.pass.EnterText("123456123");
+            yt.signIn2.Click();
+
+            //waitClickable("id", "Passwd");
+            yt.searchBar.EnterText("youtube music");
+            yt.searchBar.Submit();
+            yt.musicLink.Click();
+
+            waitClickable("xpath", Youtube.subscribeXpath);
+            yt.subscribe.Click();
+
+            waitClickable("xpath", Youtube.subscribeXpath);
+            yt.subscribe.Click();
+
+            waitClickable("xpath", Youtube.unsubscribeXpath);
+            //System.Threading.Thread.Sleep(3000);
+            yt.unsubscribe.Click();
+        }
         [TearDown]
         public void Close()
         {
-            Driver.driver.Close();
+            //Driver.driver.Close();
         }
+        
+        public void Search(AmazonBuyItem amazon, string search, Boolean wait)
+        {
+            if(wait)
+                waitVisible("id", AmazonBuyItem.checkoutId);
+            amazon.searchBar.Clear();
+            amazon.searchBar.EnterText(search);
+            amazon.searchBar.Submit();
+        }
+
+        public void waitClickable(string how, string element)
+        {
+            if (how =="partial link")
+                (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.PartialLinkText(element))));
+            if (how == "id")
+                (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.Id(element))));
+            if (how == "name")
+                (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.Name(element))));
+            if (how == "xpath")
+                (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.XPath(element))));
+            if (how == "classname")
+                (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.ClassName(element))));
+        
+        }
+
+        public void waitVisible(string how, string element)
+        {
+            if (how == "partial link")
+                (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementIsVisible(By.PartialLinkText(element))));
+            if (how == "id")
+                (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementIsVisible(By.Id(element))));
+            if (how == "name")
+                (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementIsVisible(By.Name(element))));
+            if (how == "xpath")
+                (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementIsVisible(By.XPath(element))));
+        }
+
+        public void waitInvisible(string element)
+        {
+            (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.InvisibilityOfElementLocated(By.PartialLinkText(element))));
+        }
+
+        public void CheckoutButtonWaitClick(AmazonBuyItem amazon)
+        {
+            waitVisible("id", AmazonBuyItem.checkoutId);
+            amazon.btnCheckOut.Click();
+        }
+
     }
+    
 }
