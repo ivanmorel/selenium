@@ -20,7 +20,7 @@ namespace SeleniumTest
             
         }
 
-        [SetUp]
+        //[SetUp]
         public void Init()
         {
             ChromeOptions options = new ChromeOptions();
@@ -275,10 +275,22 @@ namespace SeleniumTest
             waitClickable("xpath", Youtube.unsubscribeXpath);
             yt.unsubscribe.Click();
         }
+
+        [Test]
+        public void Testing()
+        {
+            ChromeDriver driver = new ChromeDriver();
+            driver.Navigate().GoToUrl("https://www.youtube.com");
+            driver.Navigate().GoToUrl("https://www.reddit.com/r/leagueoflegends/");
+            //driver.GetScreenshot().SaveAsFile("C:\\Users\\Ivan\\Documents\\one.png", ScreenshotImageFormat.Png);
+            //Cookie cookie = new Cookie("username", "ivanmorel");
+            System.Console.WriteLine(driver.Manage().Cookies.GetCookieNamed("pc").Value);
+            System.Console.WriteLine(driver.Manage().Cookies.GetCookieNamed("_ga").Value);
+        }
         [TearDown]
         public void Close()
         {
-            Driver.driver.Close();
+            //Driver.driver.Close();
         }
         
         public void Search(AmazonBuyItem amazon, string search, Boolean wait)
@@ -294,13 +306,13 @@ namespace SeleniumTest
         {
             if (how =="partial link")
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.PartialLinkText(element))));
-            if (how == "id")
+            else if (how == "id")
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.Id(element))));
-            if (how == "name")
+            else if (how == "name")
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.Name(element))));
-            if (how == "xpath")
+            else if (how == "xpath")
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.XPath(element))));
-            if (how == "classname")
+            else if (how == "classname")
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.ClassName(element))));
         
         }
@@ -309,11 +321,11 @@ namespace SeleniumTest
         {
             if (how == "partial link")
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementIsVisible(By.PartialLinkText(element))));
-            if (how == "id")
+            else if (how == "id")
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementIsVisible(By.Id(element))));
-            if (how == "name")
+            else if (how == "name")
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementIsVisible(By.Name(element))));
-            if (how == "xpath")
+            else if (how == "xpath")
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementIsVisible(By.XPath(element))));
         }
 
