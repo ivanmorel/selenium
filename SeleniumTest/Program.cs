@@ -1,9 +1,12 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Interactions.Internal;
+using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +29,7 @@ namespace SeleniumTest
             ChromeOptions options = new ChromeOptions();
             options.AddArguments("--disable-notifications");
             Driver.driver = new ChromeDriver(options);
+            //Driver.driver.Manage().Window.Maximize();
         }
 
         [Test]
@@ -233,12 +237,38 @@ namespace SeleniumTest
         public void TakingScreenshot()
         {
             Driver.driver.Navigate().GoToUrl("https://www.youtube.com");
-            Driver.driver.Navigate().GoToUrl("https://www.reddit.com/r/leagueoflegends/");
             Driver.driver.GetScreenshot().SaveAsFile("C:\\Users\\Ivan\\Documents\\one.png", ScreenshotImageFormat.Png);
-            //Cookie cookie = new Cookie("username", "ivanmorel");
-            //System.Console.WriteLine(Driver.driver.Manage().Cookies.GetCookieNamed("pc").Value);
-            //System.Console.WriteLine(Driver.driver.Manage().Cookies.GetCookieNamed("_ga").Value);
         }
+
+        [Test]
+        public void SetGetDeleteCookie()
+        {
+            Driver.driver.Navigate().GoToUrl("https://www.youtube.com");
+            Cookie cookie = new Cookie("username", "ivanmorel");
+            Driver.driver.Manage().Cookies.AddCookie(cookie);
+            System.Console.WriteLine(Driver.driver.Manage().Cookies.GetCookieNamed("username"));
+            Driver.driver.Manage().Cookies.DeleteCookieNamed("username");
+        }
+        [Test]
+        public void GetTitlePageSource()
+        {
+            Driver.driver.Navigate().GoToUrl("https://www.youtube.com/");
+            System.Console.WriteLine("Title: "+Driver.driver.Title);
+            System.Console.WriteLine("Page Source: "+Driver.driver.PageSource);
+        }
+
+        [Test]
+        public void KeyboardMouse()
+        {
+            Method.GoToUrl("https://www.youtube.com/");
+            Driver.driver.Keyboard.SendKeys("Music");
+            Driver.driver.Keyboard.SendKeys(Keys.Tab);
+            RemoteWebElement element = (RemoteWebElement) Driver.driver.FindElementById("search-btn");
+            Driver.driver.Mouse.Click(element.Coordinates);
+
+        }
+
+
         [TearDown]
         public void Close()
         {
@@ -253,7 +283,6 @@ namespace SeleniumTest
             amazon.searchBar.EnterText(search);
             amazon.searchBar.Submit();
         }
-
         public void waitClickable(string how, string element)
         {
             if (how =="partial link")
