@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Interactions.Internal;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
@@ -16,7 +17,6 @@ namespace SeleniumTest
  
     class Program
     {
-        
        
         static void Main(string[] args)
         {
@@ -29,7 +29,7 @@ namespace SeleniumTest
             ChromeOptions options = new ChromeOptions();
             options.AddArguments("--disable-notifications");
             Driver.driver = new ChromeDriver(options);
-            //Driver.driver.Manage().Window.Maximize();
+            //Manage().Window.Maximize();
         }
 
         [Test]
@@ -48,7 +48,6 @@ namespace SeleniumTest
             fbregister.btn1.Click();
             fbregister.btn2.Click();
         }
-
         [Test]
         public void FacebookLogIn()
         {
@@ -58,7 +57,6 @@ namespace SeleniumTest
             fblogin.pass.EnterText("12345678");
             fblogin.btnlogin.Click();
         }
-
         [Test]
         public void Ebay()
         {
@@ -72,7 +70,6 @@ namespace SeleniumTest
             ebay.phone.EnterText("8299302336");
             ebay.btn.Click();
         }
-
         [Test]
         public void Amazon()
         {
@@ -84,7 +81,6 @@ namespace SeleniumTest
             amazon.passwordCheck.EnterText("12345678");
             amazon.btncontinue.Click();
         }
-
         [Test]
         public void Google()
         {
@@ -106,7 +102,6 @@ namespace SeleniumTest
             google.phoneRec.EnterText("9302336");
             google.emailRec.EnterText("ivanmorel94@gmail.com");
         }
-
         [Test]
         public void AmazonBuyItems()
         {
@@ -145,7 +140,7 @@ namespace SeleniumTest
             amazon.country.DropdownSelect("Dominican Republic");
             amazon.phone.EnterText("8091234567");
             amazon.btnContinue.Click();
-            
+
             //Empty Cart-----------------------------------------------
             Method.GoToUrl("https://www.amazon.com/");
             amazon.cart.Click();
@@ -158,7 +153,6 @@ namespace SeleniumTest
 
             Method.GoToUrl("https://www.amazon.com/");
         }
-
         [Test]
         public void GmailSendEmail()
         {
@@ -184,7 +178,6 @@ namespace SeleniumTest
             gmail.selectEmail.Click();
             gmail.trash.Click();
         }
-
         [Test]
         public void FacebookPublishStatus()
         {
@@ -207,7 +200,6 @@ namespace SeleniumTest
             waitClickable("xpath", FacebookPublish.eliminarPublishXpath);
             fb.eliminarPublish.Click();
         }
-
         [Test]
         public void YoutubeTest()
         {
@@ -232,49 +224,105 @@ namespace SeleniumTest
             waitClickable("xpath", Youtube.unsubscribeXpath);
             yt.unsubscribe.Click();
         }
-
         [Test]
         public void TakingScreenshot()
         {
-            Driver.driver.Navigate().GoToUrl("https://www.youtube.com");
+            Navigate().GoToUrl("https://www.youtube.com");
             Driver.driver.GetScreenshot().SaveAsFile("C:\\Users\\Ivan\\Documents\\one.png", ScreenshotImageFormat.Png);
         }
-
         [Test]
         public void SetGetDeleteCookie()
         {
-            Driver.driver.Navigate().GoToUrl("https://www.youtube.com");
+            Navigate().GoToUrl("https://www.youtube.com");
             Cookie cookie = new Cookie("username", "ivanmorel");
-            Driver.driver.Manage().Cookies.AddCookie(cookie);
-            System.Console.WriteLine(Driver.driver.Manage().Cookies.GetCookieNamed("username"));
-            Driver.driver.Manage().Cookies.DeleteCookieNamed("username");
+            Manage().Cookies.AddCookie(cookie);
+            System.Console.WriteLine(Manage().Cookies.GetCookieNamed("username"));
+            Manage().Cookies.DeleteCookieNamed("username");
         }
         [Test]
         public void GetTitlePageSource()
         {
-            Driver.driver.Navigate().GoToUrl("https://www.youtube.com/");
+            Navigate().GoToUrl("https://www.youtube.com/");
             System.Console.WriteLine("Title: "+Driver.driver.Title);
             System.Console.WriteLine("Page Source: "+Driver.driver.PageSource);
         }
-
         [Test]
         public void KeyboardMouse()
         {
+            string xpath = "//*[@id='yt-masthead-signin']/div/button";
+
             Method.GoToUrl("https://www.youtube.com/");
-            Driver.driver.Keyboard.SendKeys("Music");
-            Driver.driver.Keyboard.SendKeys(Keys.Tab);
-            RemoteWebElement element = (RemoteWebElement) Driver.driver.FindElementById("search-btn");
-            Driver.driver.Mouse.Click(element.Coordinates);
+            Keyboard().PressKey(Keys.Shift);
+            Keyboard().SendKeys("Music");
+            Keyboard().ReleaseKey(Keys.Shift);
+          
+            Mouse().Click(Id("search-btn").Coordinates);
+            Mouse().ContextClick(Id("masthead-search-term").Coordinates);
+
+            Mouse().MouseMove(Xpath(xpath).Coordinates);
+            Mouse().MouseDown(Xpath(xpath).Coordinates);
+            Mouse().MouseUp(Xpath(xpath).Coordinates);
+            
+            //ILocatable alternative
+            //ILocatable locator = (ILocatable)Id("search-btn");
+            //Mouse().Click(locator.Coordinates);
+        }
+        [Test]
+        public void Actions()
+        {
+            Method.GoToUrl("https://www.youtube.com/");
+
+            Actions action = new Actions(Driver.driver);
+            action.KeyDown(Keys.Shift);
+            action.SendKeys("shift on ");
+            action.KeyUp(Keys.Shift);
+            action.SendKeys("shift off");
+            action.KeyDown(Keys.Control);
+            action.KeyDown(Keys.Shift);
+            action.SendKeys(Keys.Home);
+            action.KeyUp(Keys.Shift);
+            action.KeyUp(Keys.Control);
+            action.SendKeys(Keys.Delete);
+            action.SendKeys("Music");
+            action.Perform();
+
+            action = new Actions(Driver.driver);
+            action.ContextClick(Id("search-btn"));
+            action.ContextClick(PartialLink("Shape of You"));
+            action.ContextClick(Id("masthead-search-term")); 
+            action.Click(Id("search-btn"));
+            action.Perform();
+
+            action = new Actions(Driver.driver);
+            action.DragAndDrop(PartialLink("Popular Music Videos"), Id("masthead-search-term"));
+            action.Perform();
+
+            action = new Actions(Driver.driver);
+            action.ClickAndHold(PartialLink("Popular Music Videos"));
+            action.MoveToElement(Id("masthead-search-term"));
+            action.Release(Id("masthead-search-term"));
+            action.Perform();
 
         }
-
 
         [TearDown]
         public void Close()
         {
             //Driver.driver.Close();
         }
-        
+
+        /// <summary>
+        /// Optimization and wait functions.
+        /// </summary>
+        public RemoteWebElement PartialLink(string partiallink) { return (RemoteWebElement)Driver.driver.FindElementByPartialLinkText(partiallink); }
+        public RemoteWebElement Id(string partiallink) { return (RemoteWebElement)Driver.driver.FindElementById(partiallink); }
+        public RemoteWebElement Xpath(string xpath) { return (RemoteWebElement)Driver.driver.FindElementByXPath(xpath); }
+        public IMouse Mouse() { return Driver.driver.Mouse; }
+        public IKeyboard Keyboard() { return Driver.driver.Keyboard; }
+        public IOptions Manage() { return Driver.driver.Manage(); }
+        public INavigation Navigate() { return Driver.driver.Navigate(); }
+        public void Sleep(int time) { System.Threading.Thread.Sleep(time); }
+
         public void Search(AmazonBuyItem amazon, string search, Boolean wait)
         {
             if(wait)
@@ -297,7 +345,6 @@ namespace SeleniumTest
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementToBeClickable(By.ClassName(element))));
         
         }
-
         public void waitVisible(string how, string element)
         {
             if (how == "partial link")
@@ -309,12 +356,10 @@ namespace SeleniumTest
             else if (how == "xpath")
                 (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.ElementIsVisible(By.XPath(element))));
         }
-
         public void waitInvisible(string element)
         {
             (new WebDriverWait(Driver.driver, TimeSpan.FromSeconds(10))).Until((ExpectedConditions.InvisibilityOfElementLocated(By.PartialLinkText(element))));
         }
-
         public void CheckoutButtonWaitClick(AmazonBuyItem amazon)
         {
             waitVisible("id", AmazonBuyItem.checkoutId);
