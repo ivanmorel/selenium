@@ -4,6 +4,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Interactions.Internal;
 using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -305,23 +306,34 @@ namespace SeleniumTest
 
         }
 
+        [Test]
+        public void EventDriver()
+        {
+            EventFiringWebDriver edriver = new EventFiringWebDriver(Driver.driver);
+            edriver.ElementClicked += new EventHandler<WebElementEventArgs>(Clicked);
+            Navigate().GoToUrl("https://www.youtube.com");
+            Keyboard().SendKeys("Music");
+            edriver.FindElement(By.Id("search-btn")).Click();
+
+        }
         [TearDown]
         public void Close()
         {
-            Driver.driver.Close();
+            //Driver.driver.Close();
         }
 
         /// <summary>
         /// Optimization and wait functions.
         /// </summary>
         public RemoteWebElement PartialLink(string partiallink) { return (RemoteWebElement)Driver.driver.FindElementByPartialLinkText(partiallink); }
-        public RemoteWebElement Id(string partiallink) { return (RemoteWebElement)Driver.driver.FindElementById(partiallink); }
+        public RemoteWebElement Id(string id) { return (RemoteWebElement)Driver.driver.FindElementById(id); }
         public RemoteWebElement Xpath(string xpath) { return (RemoteWebElement)Driver.driver.FindElementByXPath(xpath); }
         public IMouse Mouse() { return Driver.driver.Mouse; }
         public IKeyboard Keyboard() { return Driver.driver.Keyboard; }
         public IOptions Manage() { return Driver.driver.Manage(); }
         public INavigation Navigate() { return Driver.driver.Navigate(); }
         public void Sleep(int time) { System.Threading.Thread.Sleep(time); }
+        public void Clicked(object sender, WebElementEventArgs e) { System.Console.WriteLine("Element clicked"); }
 
         public void Search(AmazonBuyItem amazon, string search, Boolean wait)
         {
