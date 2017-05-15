@@ -308,7 +308,7 @@ namespace SeleniumTest
         [TearDown]
         public void Close()
         {
-            //Driver.driver.Close();
+            Driver.driver.Close();
         }
 
         /// <summary>
