@@ -311,15 +311,18 @@ namespace SeleniumTest
         {
             EventFiringWebDriver edriver = new EventFiringWebDriver(Driver.driver);
             edriver.ElementClicked += new EventHandler<WebElementEventArgs>(Clicked);
+            edriver.NavigatedBack += new EventHandler<WebDriverNavigationEventArgs>(Navigated);
             Navigate().GoToUrl("https://www.youtube.com");
             Keyboard().SendKeys("Music");
-            edriver.FindElement(By.Id("search-btn")).Click();
-
+            waitClickable("id", "search-btn");
+            edriver.FindElement(By.Id("search-btn")).Click(); // Fires an ElementClicked event
+            Navigate().GoToUrl("https://www.google.com");
+            edriver.Navigate().Back(); // Fires a NavigatedBack event
         }
         [TearDown]
         public void Close()
         {
-            //Driver.driver.Close();
+            Driver.driver.Close();
         }
 
         /// <summary>
@@ -332,8 +335,10 @@ namespace SeleniumTest
         public IKeyboard Keyboard() { return Driver.driver.Keyboard; }
         public IOptions Manage() { return Driver.driver.Manage(); }
         public INavigation Navigate() { return Driver.driver.Navigate(); }
+        public void Write(string str) { System.Console.WriteLine(str); }
         public void Sleep(int time) { System.Threading.Thread.Sleep(time); }
-        public void Clicked(object sender, WebElementEventArgs e) { System.Console.WriteLine("Element clicked"); }
+        public void Clicked(object sender, WebElementEventArgs e) { Write("Element clicked"); }
+        public void Navigated(object sender, WebDriverNavigationEventArgs e) { Write("Navigated back"); }
 
         public void Search(AmazonBuyItem amazon, string search, Boolean wait)
         {
